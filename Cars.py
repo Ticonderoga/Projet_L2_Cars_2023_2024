@@ -84,11 +84,11 @@ if __name__ == "__main__":
                 keypressed = 0
         if keypressed == pygame.K_RIGHT:
             print('a droite')
-            taxi.rotate(1)
+            taxi.rotate(-1)
 
         elif keypressed == pygame.K_LEFT:
             print('a gauche')
-            taxi.rotate(-1)
+            taxi.rotate(1)
 
                 
         pygame.display.flip()
