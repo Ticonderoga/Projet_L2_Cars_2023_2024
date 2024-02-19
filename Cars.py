@@ -34,13 +34,13 @@ colors = [
     "#B48EAD",
 ]
 
-player_img = pygame.image.load("./Taxi.png")
+taxi_img = pygame.image.load("./Taxi.png")
 
 
 class Voiture(pygame.sprite.Sprite):
     def __init__(self, x=0, y=0):
         super().__init__()
-        self.image = player_img
+        self.image = taxi_img
         self.origin_image = self.image
         self.rect = self.image.get_rect()
         self.x = x
