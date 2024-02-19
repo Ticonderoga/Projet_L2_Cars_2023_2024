@@ -7,7 +7,8 @@ Created on Wed Mar  1 16:00:13 2023
 """
 
 import pygame
-from math import cos, sin, pi
+from math import cos, sin, pi, tan
+from numpy import deg2rad
 from random import randint
 
 pygame.init()  # Initialise pygame
@@ -36,7 +37,7 @@ colors = [
 ]
 
 taxi_img = pygame.image.load("./Taxi.png")
-rock_img = pygame.image.load("./Taxi.png")
+rock_img = pygame.image.load("./Rock_beryl.png")
 
 class Voiture(pygame.sprite.Sprite):
     def __init__(self, x=0, y=0):
@@ -72,13 +73,13 @@ class Obstacle(pygame.sprite.Sprite) :
         self.velocity = VELOCITY
         self.rect = self.image.get_rect(center=self.rect.center)
 
-    def draw(self):
+    def draw(self,angle):
         """
         méthode permettant d'afficher l'image à l'écran
 
         """
         self.rect = self.image.get_rect(center=self.rect.center)
-        self.rect.x = self.rect.x 
+        self.rect.x = self.rect.x + tan(deg2rad(angle))*VELOCITY
         self.rect.y = self.rect.y + VELOCITY
 
         # permet de supprimer l'obstacle si l'on sort de l'écran
@@ -97,12 +98,16 @@ if __name__ == "__main__":
     running = True
     taxi = Voiture(WIDTH //2, HEIGHT // 2)
     obs = Obstacle()
+    Lobs = []
+        
+
     while running:
         # Level creation
         frame_count = frame_count+ 1
-        screen.fill(colors[0])
+        screen.fill(colors[2])
         taxi.draw()
-
+        if frame_count %30 == 0 :
+            Lobs.append(Obstacle(x=randint(10,WIDTH-10),y=0))
         # Gestion des entrées au clavier
         for event in pygame.event.get():
             # Handle the closing
@@ -117,13 +122,11 @@ if __name__ == "__main__":
             else:
                 keypressed = 0
         if keypressed == pygame.K_RIGHT:
-            print('a droite')
             taxi.rotate(-1)
-
         elif keypressed == pygame.K_LEFT:
-            print('a gauche')
             taxi.rotate(1)
-
-        obs.draw()
+        
+        for obs in Lobs :
+            obs.draw(taxi.angle)
         pygame.display.flip()
         clock.tick(FPS)
