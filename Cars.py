@@ -20,6 +20,7 @@ FPS = 60
 pygame.display.set_caption("Drift")
 HEIGHT = 920
 WIDTH = 600
+VELOCITY = 3
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 
 colors = [
@@ -35,7 +36,7 @@ colors = [
 ]
 
 taxi_img = pygame.image.load("./Taxi.png")
-
+rock_img = pygame.image.load("./Taxi.png")
 
 class Voiture(pygame.sprite.Sprite):
     def __init__(self, x=0, y=0):
@@ -57,12 +58,45 @@ class Voiture(pygame.sprite.Sprite):
         self.image = pygame.transform.rotozoom(self.origin_image, self.angle, 1)
         self.rect = self.image.get_rect(center=self.rect.center)
 
+class Obstacle(pygame.sprite.Sprite) :
+    def __init__(self,x = WIDTH//3, y = 0) :
+        super().__init__()
+        self.x = x
+        self.y = y
+        
+        self.image = rock_img
+        self.origin_image = self.image
+        self.rect = self.image.get_rect()
+        self.rect.centerx = self.x
+        self.rect.centery = self.y
+        self.velocity = VELOCITY
+        self.rect = self.image.get_rect(center=self.rect.center)
 
+    def draw(self):
+        """
+        méthode permettant d'afficher l'image à l'écran
+
+        """
+        self.rect = self.image.get_rect(center=self.rect.center)
+        self.rect.x = self.rect.x 
+        self.rect.y = self.rect.y + VELOCITY
+
+        # permet de supprimer l'obstacle si l'on sort de l'écran
+        if not screen.get_rect().contains(self.rect):
+            self.remove()
+            self.kill()
+        screen.blit(self.image, self.rect)
+    
+        
+
+        
+        
 
 if __name__ == "__main__":
     frame_count = 0
     running = True
     taxi = Voiture(WIDTH //2, HEIGHT // 2)
+    obs = Obstacle()
     while running:
         # Level creation
         frame_count = frame_count+ 1
@@ -90,6 +124,6 @@ if __name__ == "__main__":
             print('a gauche')
             taxi.rotate(1)
 
-                
+        obs.draw()
         pygame.display.flip()
         clock.tick(FPS)
