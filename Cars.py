@@ -81,6 +81,8 @@ class Obstacle(pygame.sprite.Sprite) :
         self.rect = self.image.get_rect(center=self.rect.center)
         self.rect.x = self.rect.x + tan(deg2rad(angle))*VELOCITY
         self.rect.y = self.rect.y + VELOCITY
+        self.x = self.rect.x
+        self.y = self.rect.y
 
         # permet de supprimer l'obstacle si l'on sort de l'écran
         if not screen.get_rect().contains(self.rect):
@@ -88,7 +90,12 @@ class Obstacle(pygame.sprite.Sprite) :
             self.kill()
         screen.blit(self.image, self.rect)
     
-        
+    def onscreen(self) :
+        return self.y <= HEIGHT
+    
+    def offscreen(self) :
+        return self.y >= HEIGHT
+    
 
         
         
@@ -97,7 +104,7 @@ if __name__ == "__main__":
     frame_count = 0
     running = True
     taxi = Voiture(WIDTH //2, HEIGHT // 2)
-    obs = Obstacle()
+   
     Lobs = []
         
 
@@ -106,6 +113,8 @@ if __name__ == "__main__":
         frame_count = frame_count+ 1
         screen.fill(colors[2])
         taxi.draw()
+        
+        
         if frame_count %30 == 0 :
             Lobs.append(Obstacle(x=randint(10,WIDTH-10),y=0))
         # Gestion des entrées au clavier
@@ -126,7 +135,13 @@ if __name__ == "__main__":
         elif keypressed == pygame.K_LEFT:
             taxi.rotate(1)
         
-        for obs in Lobs :
-            obs.draw(taxi.angle)
+        for i,obs in enumerate(Lobs) :
+            if obs.onscreen() :
+                obs.draw(taxi.angle)
+            else :
+                Lobs.pop(i)
+                
+                
+                
         pygame.display.flip()
         clock.tick(FPS)
